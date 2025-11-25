@@ -1,7 +1,9 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
     <title>AI Budget Advisor</title>
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
     <style>
         body { font-family: Arial, sans-serif; margin: 40px; }
         h1 { color: #2c3e50; }
@@ -12,28 +14,31 @@
         button:hover { background: #2980b9; }
         .result { margin-top: 30px; padding: 20px; border: 1px solid #ccc; }
         .download-btn { margin-top: 10px; display: inline-block; }
+        footer { margin-top: 50px; text-align: center; font-size: 14px; color: #555; }
+        footer a { color: #3498db; text-decoration: none; }
+        footer a:hover { text-decoration: underline; }
     </style>
 </head>
 <body>
     <h1>AI Budget Advisor</h1>
     <form method="POST">
-        <label>Income:</label>
-        <input type="number" name="income" required>
+        <label for="income">Income:</label>
+        <input type="number" name="income" id="income" required>
 
-        <label>Food:</label>
-        <input type="number" name="food" required>
+        <label for="food">Food:</label>
+        <input type="number" name="food" id="food" required>
 
-        <label>Transport:</label>
-        <input type="number" name="transport" required>
+        <label for="transport">Transport:</label>
+        <input type="number" name="transport" id="transport" required>
 
-        <label>Rent:</label>
-        <input type="number" name="rent" required>
+        <label for="rent">Rent:</label>
+        <input type="number" name="rent" id="rent" required>
 
-        <label>Utilities:</label>
-        <input type="number" name="utilities" required>
+        <label for="utilities">Utilities:</label>
+        <input type="number" name="utilities" id="utilities" required>
 
-        <label>Education:</label>
-        <input type="number" name="education" required>
+        <label for="education">Education:</label>
+        <input type="number" name="education" id="education" required>
 
         <button type="submit">Get Advice</button>
     </form>
@@ -44,6 +49,14 @@
         <p><strong>Income:</strong> {{ result.income }}</p>
         <p><strong>Savings:</strong> {{ result.savings }}</p>
         <p><strong>Overspend Category:</strong> {{ result.overspend_category }}</p>
+
+        <h3>Expense Breakdown:</h3>
+        <ul>
+            {% for category, amount in result.expenses.items() %}
+            <li><strong>{{ category.capitalize() }}:</strong> {{ amount }}</li>
+            {% endfor %}
+        </ul>
+
         <h3>Advice:</h3>
         <ul>
             {% for tip in result.advice %}
@@ -58,7 +71,7 @@
         </a>
 
         <h3>Expenses Chart:</h3>
-        <img src="{{ url_for('static', filename='expenses_chart.png') }}" alt="Expenses Chart">
+        <img src="{{ url_for('static', filename='expenses_chart.png') }}" alt="Expenses Chart" width="500">
 
         <!-- Download Chart -->
         <a href="{{ url_for('static', filename='expenses_chart.png') }}" download="expenses_chart.png" class="download-btn">
@@ -66,5 +79,12 @@
         </a>
     </div>
     {% endif %}
+
+    <!-- Footer -->
+    <footer>
+        <p>Created by Odii — 
+           <a href="https://github.com/chi1034/ai-budget-app" target="_blank">View on GitHub</a>
+        </p>
+    </footer>
 </body>
 </html>
