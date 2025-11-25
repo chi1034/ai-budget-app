@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AI Budget Advisor</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        h1 { color: #2c3e50; }
+        form { margin-bottom: 20px; }
+        label { display: block; margin-top: 10px; }
+        input { padding: 5px; width: 200px; }
+        button { margin-top: 15px; padding: 10px 20px; background: #3498db; color: white; border: none; cursor: pointer; }
+        button:hover { background: #2980b9; }
+        .result { margin-top: 30px; padding: 20px; border: 1px solid #ccc; }
+        .download-btn { margin-top: 10px; display: inline-block; }
+    </style>
+</head>
+<body>
+    <h1>AI Budget Advisor</h1>
+    <form method="POST">
+        <label>Income:</label>
+        <input type="number" name="income" required>
+
+        <label>Food:</label>
+        <input type="number" name="food" required>
+
+        <label>Transport:</label>
+        <input type="number" name="transport" required>
+
+        <label>Rent:</label>
+        <input type="number" name="rent" required>
+
+        <label>Utilities:</label>
+        <input type="number" name="utilities" required>
+
+        <label>Education:</label>
+        <input type="number" name="education" required>
+
+        <button type="submit">Get Advice</button>
+    </form>
+
+    {% if result %}
+    <div class="result">
+        <h2>Results</h2>
+        <p><strong>Income:</strong> {{ result.income }}</p>
+        <p><strong>Savings:</strong> {{ result.savings }}</p>
+        <p><strong>Overspend Category:</strong> {{ result.overspend_category }}</p>
+        <h3>Advice:</h3>
+        <ul>
+            {% for tip in result.advice %}
+            <li>{{ tip }}</li>
+            {% endfor %}
+        </ul>
+
+        <!-- Download Advice as Text -->
+        <a href="data:text/plain;charset=utf-8,{{ result.advice|join('\n') }}" 
+           download="budget_advice.txt" class="download-btn">
+            <button type="button">Download Advice</button>
+        </a>
+
+        <h3>Expenses Chart:</h3>
+        <img src="{{ url_for('static', filename='expenses_chart.png') }}" alt="Expenses Chart">
+
+        <!-- Download Chart -->
+        <a href="{{ url_for('static', filename='expenses_chart.png') }}" download="expenses_chart.png" class="download-btn">
+            <button type="button">Download Chart</button>
+        </a>
+    </div>
+    {% endif %}
+</body>
+</html>
