@@ -77,3 +77,5 @@ ai_budget_app/
 ## License
 
 This project is open source and available under the [MIT License](LICENSE).
+
+#Deployed: https://httpsgithubcomchi1034ai-budget-appgit.lovable.app
