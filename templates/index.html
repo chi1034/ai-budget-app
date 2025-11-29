@@ -2,89 +2,118 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Budget Advisor</title>
     <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
-    <style>
-        body { font-family: Arial, sans-serif; margin: 40px; }
-        h1 { color: #2c3e50; }
-        form { margin-bottom: 20px; }
-        label { display: block; margin-top: 10px; }
-        input { padding: 5px; width: 200px; }
-        button { margin-top: 15px; padding: 10px 20px; background: #3498db; color: white; border: none; cursor: pointer; }
-        button:hover { background: #2980b9; }
-        .result { margin-top: 30px; padding: 20px; border: 1px solid #ccc; }
-        .download-btn { margin-top: 10px; display: inline-block; }
-        footer { margin-top: 50px; text-align: center; font-size: 14px; color: #555; }
-        footer a { color: #3498db; text-decoration: none; }
-        footer a:hover { text-decoration: underline; }
-    </style>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <h1>AI Budget Advisor</h1>
-    <form method="POST">
-        <label for="income">Income:</label>
-        <input type="number" name="income" id="income" required>
 
-        <label for="food">Food:</label>
-        <input type="number" name="food" id="food" required>
+    <div class="container">
+        <header>
+            <h1>AI Budget Advisor</h1>
+            <p>Optimize your spending with machine learning insights.</p>
+        </header>
 
-        <label for="transport">Transport:</label>
-        <input type="number" name="transport" id="transport" required>
+        <div class="content">
+            <!-- Input Form Section -->
+            <div class="form-section">
+                <form method="POST">
+                    <div class="form-group">
+                        <label for="income">Monthly Income ($)</label>
+                        <input type="number" name="income" id="income" placeholder="e.g. 5000" required value="{{ result.income if result else '' }}">
+                    </div>
 
-        <label for="rent">Rent:</label>
-        <input type="number" name="rent" id="rent" required>
+                    <div class="form-group">
+                        <label for="food">Food ($)</label>
+                        <input type="number" name="food" id="food" placeholder="e.g. 600" required value="{{ result.expenses.food if result else '' }}">
+                    </div>
 
-        <label for="utilities">Utilities:</label>
-        <input type="number" name="utilities" id="utilities" required>
+                    <div class="form-group">
+                        <label for="transport">Transport ($)</label>
+                        <input type="number" name="transport" id="transport" placeholder="e.g. 300" required value="{{ result.expenses.transport if result else '' }}">
+                    </div>
 
-        <label for="education">Education:</label>
-        <input type="number" name="education" id="education" required>
+                    <div class="form-group">
+                        <label for="rent">Rent ($)</label>
+                        <input type="number" name="rent" id="rent" placeholder="e.g. 1500" required value="{{ result.expenses.rent if result else '' }}">
+                    </div>
 
-        <button type="submit">Get Advice</button>
-    </form>
+                    <div class="form-group">
+                        <label for="utilities">Utilities ($)</label>
+                        <input type="number" name="utilities" id="utilities" placeholder="e.g. 200" required value="{{ result.expenses.utilities if result else '' }}">
+                    </div>
 
-    {% if result %}
-    <div class="result">
-        <h2>Results</h2>
-        <p><strong>Income:</strong> {{ result.income }}</p>
-        <p><strong>Savings:</strong> {{ result.savings }}</p>
-        <p><strong>Overspend Category:</strong> {{ result.overspend_category }}</p>
+                    <div class="form-group">
+                        <label for="education">Education ($)</label>
+                        <input type="number" name="education" id="education" placeholder="e.g. 100" required value="{{ result.expenses.education if result else '' }}">
+                    </div>
 
-        <h3>Expense Breakdown:</h3>
-        <ul>
-            {% for category, amount in result.expenses.items() %}
-            <li><strong>{{ category.capitalize() }}:</strong> {{ amount }}</li>
-            {% endfor %}
-        </ul>
+                    <button type="submit" class="submit-btn">Get AI Advice</button>
+                </form>
+            </div>
 
-        <h3>Advice:</h3>
-        <ul>
-            {% for tip in result.advice %}
-            <li>{{ tip }}</li>
-            {% endfor %}
-        </ul>
+            <!-- Results Section -->
+            {% if result %}
+            <div class="result-section">
+                <div class="result-header">
+                    <h2>Your Analysis</h2>
+                </div>
 
-        <!-- Download Advice as Text -->
-        <a href="data:text/plain;charset=utf-8,{{ result.advice|join('\n') }}" 
-           download="budget_advice.txt" class="download-btn">
-            <button type="button">Download Advice</button>
-        </a>
+                <div class="summary-cards">
+                    <div class="card">
+                        <h4>Income</h4>
+                        <p>${{ result.income }}</p>
+                    </div>
+                    <div class="card {{ 'success' if result.savings >= 0 else 'danger' }}">
+                        <h4>Savings</h4>
+                        <p>${{ result.savings }}</p>
+                    </div>
+                    <div class="card highlight">
+                        <h4>Watch Out</h4>
+                        <p>{{ result.overspend_category }}</p>
+                    </div>
+                </div>
 
-        <h3>Expenses Chart:</h3>
-        <img src="{{ url_for('static', filename='expenses_chart.png') }}" alt="Expenses Chart" width="500">
+                <div class="chart-container">
+                    <img src="{{ url_for('static', filename='expenses_chart.png') }}" alt="Expenses Chart">
+                </div>
 
-        <!-- Download Chart -->
-        <a href="{{ url_for('static', filename='expenses_chart.png') }}" download="expenses_chart.png" class="download-btn">
-            <button type="button">Download Chart</button>
-        </a>
+                <h3>AI Recommendations</h3>
+                <ul class="advice-list">
+                    {% for tip in result.advice %}
+                    <li>{{ tip }}</li>
+                    {% endfor %}
+                </ul>
+
+                <div class="actions">
+                    <a href="data:text/plain;charset=utf-8,{{ result.advice|join('\n') }}" download="budget_advice.txt" class="btn-secondary">
+                        <button>Download Advice</button>
+                    </a>
+                    <a href="{{ url_for('static', filename='expenses_chart.png') }}" download="expenses_chart.png" class="btn-secondary">
+                        <button>Download Chart</button>
+                    </a>
+                </div>
+            </div>
+            {% else %}
+            <div class="result-section" style="display: flex; align-items: center; justify-content: center; text-align: center; color: #6b7280;">
+                <div>
+                    <h3>Ready to analyze?</h3>
+                    <p>Fill out the form to see your budget breakdown and AI tips here.</p>
+                </div>
+            </div>
+            {% endif %}
+        </div>
     </div>
-    {% endif %}
 
-    <!-- Footer -->
     <footer>
-        <p>Created by Odii — 
-           <a href="https://github.com/chi1034/ai-budget-app" target="_blank">View on GitHub</a>
-        </p>
+        <p>Created by Odii — <a href="https://github.com/chi1034/ai-budget-app" target="_blank">View on GitHub</a></p>
     </footer>
+
 </body>
 </html>

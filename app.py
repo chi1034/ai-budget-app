@@ -28,10 +28,13 @@ def index():
         }])
         overspend_category = model.predict(row)[0]
         tips, savings = generate_tips(income, expenses, overspend_category)
-        plot_expenses(expenses)
+        
+        chart_path = os.path.join("static", "expenses_chart.png")
+        plot_expenses(expenses, save_path=chart_path)
 
         result = {
             "income": income,
+            "expenses": expenses,
             "savings": savings,
             "overspend_category": overspend_category,
             "advice": tips
